@@ -1,6 +1,5 @@
 import pandas as pd
 import requests
-import psycopg2
 import csv
 
 def get_passenger_data(year: int):
@@ -19,8 +18,6 @@ def get_passenger_data(year: int):
 
         # Save to csv file
         df = pd.DataFrame(reader)
-        df.to_csv(f"raw_data_{year}.csv")
+        df.to_csv(f"../raw_data_{year}.csv")
 
         print("Wrote data to csv file")
-
-        print(df[:10])

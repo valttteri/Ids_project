@@ -1,22 +1,11 @@
-import pandas as pd
+# The columns to drop from the dataset
 
-def filter_data(path: str):
-    print("Cleaning data...")
-
-    df = pd.read_csv(path, header=1, index_col=0)
-    year = df.iloc[0]["VUOSI"]
-
-    df = df.drop(df.columns[0], axis=1)
-
-    df = df.drop(columns=[
+columns = [
         "ID",
         "NELJÄNNES",
-        "KUUKAUSI",
-        "VIIKKO",
-        "PÄIVÄ",
         "KUUKAUSIPÄIVÄ",
-        "TUNTI",
         "LOMA",
+        "AJONEUVOT",
         "HENKILÖAUTOT",
         "PAKETTIAUTOT",
         "KUORMA-AUTOT",
@@ -38,12 +27,50 @@ def filter_data(path: str):
         "User",
         "RANNALLE_PYÖRÄT",
         "LISÄTIETOJA"
-    ])
+    ]
 
-    df = df.fillna(-1)
+"""
+All columns: 
 
-    df.to_csv(f"parsed_data_{year}.csv")
-
-    print("Data cleaning finished")
-
-    print(df[:5])
+ID
+PÄIVÄMÄÄRÄ
+VUOSI
+NELJÄNNES
+KUUKAUSI
+VIIKKO
+PÄIVÄ
+KUUKAUSIPÄIVÄ
+TUNTI
+LOMA
+ALUS
+SUUNTA
+PYSÄKKI
+NOUSIJAT
+AJONEUVOT
+HENKILÖAUTOT
+PAKETTIAUTOT
+KUORMA-AUTOT
+REKAT
+MUUT
+LISÄLIIKENNE
+RANNALLE_NOUSIJAT
+RANNALLE_AJONEUVOT
+RANNALLE_HENKILÖAUTOT
+RANNALLE_PAKETTIAUTOT
+RANNALLE_KUORMA-AUTOT
+RANNALLE_REKAT
+RANNALLE_MUUT
+LÄMPÖTILA_KUUKAUSI
+SADE_KUUKAUSI
+LÄMPÖTILA_PÄIVÄ
+SADE_PÄIVÄ
+LÄMPÖTILA
+SADE
+TUULI
+TAPAHTUMA
+AJAMATON
+LISÄTIETOJA
+User
+PYÖRÄT
+RANNALLE_PYÖRÄT
+"""
