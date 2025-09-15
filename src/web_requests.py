@@ -4,7 +4,7 @@ import csv
 
 def get_passenger_data(year: int):
     # Fetch the Suomenlinna ferry data from the api and write it to a csv file
-    print("Fetching data...")
+    print(f"Fetching data from {year}...")
 
     with requests.Session() as s:
         headers = {"Authorization": "LWS d59c041a-2ad1-4beb-b769-b9d7ea3a5628"}
