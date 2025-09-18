@@ -17,31 +17,13 @@ class UserInterface:
 
             match cmd:
                 case 1:
-                    year = input("Enter a year (20xx) or a time frame (20xx-20xx): ")
+                    start = int(input("Enter a starting year (20xx): "))
+                    end = input("Enter an ending year (20xx) or press enter: ")
+                    end = start if len(end) == 0 else int(end)
 
-                    # Time frame
-                    if len(year) == 9:
-                        start = int(year[:4])
-                        end = int(year[5:])
-                        
-                        if start >= end:
-                            print("Invalid timeframe")
-                            continue
-                        if start not in range(2000, 2026) or end not in range(2000, 2026):
-                            print("Start and end must be in range 2000-2025")
-                            continue
+                    if self.validate_year_input(start, end):
                         for i in range(start, end+1):
                             get_passenger_data(i)
-                    
-                    # Single year
-                    elif len(year) == 4:
-                        if int(year) not in range(2000, 2026):
-                            print("Year must be in range 2000-2025")
-                            continue
-                        get_passenger_data(year)
-                    else:
-                        print("Invalid input")
-                        continue
 
                 case 2:
                     year = input("Enter a year: ")
@@ -50,5 +32,14 @@ class UserInterface:
                 case 3:
                     break
 
+    def validate_year_input(self, start: int, end: str):
+        # Validate the year input given by user on case 1
+        if start > end:
+            print("Invalid timeframe")
+            return False
+        if start not in range(2000, 2026) or end not in range(2000, 2026):
+            print("Start and end must be in range 2000-2025")
+            return False
+        return True
 
 
