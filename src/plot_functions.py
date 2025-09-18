@@ -83,3 +83,38 @@ def plot_weekday_nousijat(year: int):
     plt.title(f"Vuoden {year} nousijat viikonpäivittäin")
     plt.tight_layout()
     plt.show()
+
+def plot_hourly_nousijat(year: int):
+    rows = get_data(year)
+    if rows is None:
+        return
+
+    header, data = rows[0], rows[1:]
+    idx_hour = header.index("TUNTI")
+    idx_passengers = header.index("NOUSIJAT")
+    idx_direction = header.index("SUUNTA")
+
+    hourly_counts = defaultdict(int)
+
+    for row in data:
+        try:
+            hour = int(row[idx_hour])
+            passengers = int(row[idx_passengers])
+            direction = row[idx_direction]
+        except ValueError:
+            continue
+
+        if direction not in ("k1", "k2"):
+            hourly_counts[hour] += passengers
+
+    hours = range(0, 24)
+    counts = [hourly_counts[h] for h in hours]
+
+    plt.figure(figsize=(12, 6))
+    plt.bar(hours, counts)
+    plt.xticks(hours)
+    plt.xlabel("Tunti")
+    plt.ylabel("Nousijat")
+    plt.title(f"Vuoden {year} nousijat tunneittain")
+    plt.tight_layout()
+    plt.show()
