@@ -2,10 +2,13 @@ import pandas as pd
 
 def clean_data(path: str, columns: list):
     # Clean the raw data
+    try:
+        df = pd.read_csv(path, header=1, index_col=0)
+    except FileNotFoundError:
+        print("Found no raw data from that year")
+        return
 
     print("Cleaning data...")
-
-    df = pd.read_csv(path, header=1, index_col=0)
     year = df.iloc[0]["VUOSI"]
 
     # Drop unnecessary columns

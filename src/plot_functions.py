@@ -118,3 +118,45 @@ def plot_hourly_nousijat(year: int):
     plt.title(f"Vuoden {year} nousijat tunneittain")
     plt.tight_layout()
     plt.show()
+
+def plot_hourly_nousijat_by_direction(year: int):
+    rows = get_data(year)
+    if rows is None:
+        return
+
+    header, data = rows[0], rows[1:]
+    idx_hour = header.index("TUNTI")
+    idx_direction = header.index("SUUNTA")
+    idx_passengers = header.index("NOUSIJAT")
+
+    counts = defaultdict(lambda: defaultdict(int))
+
+    for row in data:
+        try:
+            hour = int(row[idx_hour])
+            direction = row[idx_direction]
+            passengers = int(row[idx_passengers])
+        except ValueError:
+            continue
+
+        if direction not in ("k1", "k2"):
+            counts[hour][direction] += passengers
+
+    hours = range(0, 24)
+    directions = sorted({row[idx_direction] for row in data if row[idx_direction] not in ("k1", "k2")})
+
+    width = 0.8 / len(directions)
+    x = np.arange(len(hours))
+    plt.figure(figsize=(12, 6))
+
+    for i, direction in enumerate(directions):
+        vals = [counts[h][direction] for h in hours]
+        plt.bar(x + i*width, vals, width, label=f"Suunta {direction}")
+
+    plt.xticks(x + width*(len(directions)-1)/2, hours)
+    plt.xlabel("Tunti")
+    plt.ylabel("Nousijat")
+    plt.title(f"Vuoden {year} nousijat tunneittain suunnan mukaan")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
