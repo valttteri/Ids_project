@@ -11,6 +11,10 @@ def get_passenger_data(year: int):
         
         # Get passenger data
         passenger_data = s.get(f"https://louhin.hsl.fi/api/1.0/data/257001?filter[VUOSI]={year}", headers=headers)
+        if passenger_data.status_code == 401:
+            print("Request denied")
+            return
+        
         passenger_data = passenger_data.content.decode("latin-1")
 
         # Parse data
