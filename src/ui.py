@@ -1,6 +1,9 @@
 from web_requests import get_passenger_data
 from data_cleaner import clean_data
-from plot_functions import plot_monthly_nousijat
+from plot_functions import (
+    plot_monthly_nousijat,
+    plot_weekday_nousijat
+)
 
 class UserInterface:
     """
@@ -14,7 +17,7 @@ class UserInterface:
         while True:
             cmd = int(input(
                 "\nEnter a command:\n1 : Fetch data\n2 : Clean data\n3 : Plot monthly passengers\n"
-                "4 : Break\n"
+                "4 : Plot weekly passengers\n5 : Quit\n"
             ))
 
             match cmd:
@@ -36,6 +39,10 @@ class UserInterface:
                     plot_monthly_nousijat(year)
 
                 case 4:
+                    year = int(input("Enter a year: "))
+                    plot_weekday_nousijat(year)
+
+                case 5:
                     break
 
     def validate_year_input(self, start: int, end: str):

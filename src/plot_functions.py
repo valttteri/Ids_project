@@ -3,13 +3,21 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 import numpy as np
 
-def plot_monthly_nousijat(year: int):
+def get_data(year: int):
+    # Read a csv file and return its contents
     try:
-        with open(f"../parsed_data_{year}.csv", newline='') as csvfile:
+        with open(f"../parsed_data_{year}.csv", newline='', encoding="utf-8") as csvfile:
             reader = csv.reader(csvfile, delimiter=",")
             rows = list(reader)
     except FileNotFoundError:
         print(f"Found no parsed data from {year}")
+        return None
+    
+    return rows 
+
+def plot_monthly_nousijat(year: int):
+    rows = get_data(year)
+    if rows is None:
         return
 
     header, data = rows[0], rows[1:]
@@ -38,5 +46,40 @@ def plot_monthly_nousijat(year: int):
     plt.xlabel("Kuukausi")
     plt.ylabel("Nousijat")
     plt.title(f"Vuoden {year} kuukausittaiset nousijat")
+    plt.tight_layout()
+    plt.show()
+
+def plot_weekday_nousijat(year: int):
+    rows = get_data(year)
+    if rows is None:
+        return
+
+    header, data = rows[0], rows[1:]
+    idx_weekday = header.index("PÄIVÄ")
+    idx_passengers = header.index("NOUSIJAT")
+    idx_direction = header.index("SUUNTA")
+
+    weekday_counts = defaultdict(int)
+
+    for row in data:
+        try:
+            weekday = int(row[idx_weekday])
+            passengers = int(row[idx_passengers])
+            direction = row[idx_direction]
+        except ValueError:
+            continue
+
+        if direction not in ("k1", "k2"):
+            weekday_counts[weekday] += passengers
+
+    weekdays = range(0, 7)
+    counts = [weekday_counts[d] for d in weekdays]
+    weekday_labels = ["Ma", "Ti", "Ke", "To", "Pe", "La", "Su"]
+
+    plt.figure(figsize=(10, 6))
+    plt.bar(weekday_labels, counts)
+    plt.xlabel("Viikonpäivä")
+    plt.ylabel("Nousijat")
+    plt.title(f"Vuoden {year} nousijat viikonpäivittäin")
     plt.tight_layout()
     plt.show()
