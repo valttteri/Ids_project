@@ -232,7 +232,7 @@ def plot_average_weekly_passengers(years: list, show_individual=True):
         print("No data available for the selected years.")
         return
 
-    all_weeks = range(1, 54)
+    all_weeks = range(1, 53)
     weekly_sums = defaultdict(list)
 
     for wc in all_weekly_counts:
