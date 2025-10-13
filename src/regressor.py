@@ -58,11 +58,11 @@ def create_supervised_dataset(series, n_lags, n_forecasts):
 
 # Combine data from multiple years into a single pandas series
 def combine_years(years: tuple):
-  paths = [f"raw_data_{year}.csv" for year in range(years[0], years[1] + 1)]
+  paths = [f"../raw_data_{year}.csv" for year in range(years[0], years[1] + 1)]
   s = [combine_data_by_date(path) for path in paths]
   return pd.concat(s)
 
-ts = combine_years((2016, 2024))
+ts = combine_years((2016, 2023))
 lag_features = create_lag_features(ts, n_lags=5)
 
 # Train / Test split
@@ -90,8 +90,23 @@ y_pred = model.predict(X_test)
 rmse = root_mean_squared_error(y_test, y_pred)
 print('RMSE:', rmse)
 
-plt.figure(figsize=(10, 5))
+events = np.array([np.datetime64('2023-03-25'), 
+                   np.datetime64('2023-12-24'), 
+                   np.datetime64('2023-06-24'), 
+                   np.datetime64('2023-02-21'), 
+                   np.datetime64('2023-06-17'), 
+                   np.datetime64('2023-04-09'), 
+                   np.datetime64('2023-05-01'), 
+                   np.datetime64('2023-08-24'), 
+                   np.datetime64('2023-08-15'), 
+                   np.datetime64('2023-12-31'), 
+                   np.datetime64('2023-11-04')])
+                  
+
+plt.figure(figsize=(20, 10))
 plt.plot(y_test.index, y_test, label="Actual")
 plt.plot(y_test.index, y_pred, label="Predicted")
+for event in events:
+    plt.axvline(event, color='red', linestyle='--', linewidth=2) 
 plt.legend()
 plt.show()
