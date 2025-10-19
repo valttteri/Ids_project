@@ -160,3 +160,101 @@ def plot_hourly_nousijat_by_direction(year: int):
     plt.legend()
     plt.tight_layout()
     plt.show()
+
+def plot_weekly_passengers(year):
+    rows = get_data(year)
+
+    if rows is None:
+        return
+    
+    header, data = rows[0], rows[1:]
+    idx_year = header.index("VUOSI")
+    idx_week = header.index("VIIKKO")
+    idx_passengers = header.index("NOUSIJAT")
+    idx_direction = header.index("SUUNTA")
+
+    weekly_counts = defaultdict(int)
+
+    for row in data:
+        try:
+            year = int(row[idx_year])
+            week = int(row[idx_week])
+            passengers = int(row[idx_passengers])
+            direction = row[idx_direction]
+        except ValueError:
+            continue
+
+        if direction not in ("k1", "k2"):
+            weekly_counts[week] += passengers
+
+
+    weeks = sorted(weekly_counts.keys())
+    counts = [weekly_counts[w] for w in weeks]
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(weeks, counts, marker="o", linewidth=2)
+    plt.xticks(range(1, 54))
+    plt.xlabel("Week")
+    plt.ylabel("Passengers")
+    plt.title(f"Years {year} passengers per week")
+    plt.grid(True, linestyle="--", alpha=0.6)
+    plt.tight_layout()
+    plt.show()
+
+def plot_average_weekly_passengers(years: list, show_individual=True):
+    all_weekly_counts = []
+
+    for year in years:
+        rows = get_data(year)
+        if rows is None:
+            continue
+
+        header, data = rows[0], rows[1:]
+        idx_week = header.index("VIIKKO")
+        idx_passengers = header.index("NOUSIJAT")
+        idx_direction = header.index("SUUNTA")
+
+        weekly_counts = defaultdict(int)
+        for row in data:
+            try:
+                week = int(row[idx_week])
+                passengers = int(row[idx_passengers])
+                direction = row[idx_direction]
+            except ValueError:
+                continue
+
+            if direction not in ("k1", "k2"):
+                weekly_counts[week] += passengers
+
+        all_weekly_counts.append(weekly_counts)
+
+    if not all_weekly_counts:
+        print("No data available for the selected years.")
+        return
+
+    all_weeks = range(1, 53)
+    weekly_sums = defaultdict(list)
+
+    for wc in all_weekly_counts:
+        for week in all_weeks:
+            weekly_sums[week].append(wc.get(week, 0))
+
+    avg_counts = [np.mean(weekly_sums[w]) for w in all_weeks]
+
+    plt.figure(figsize=(12, 6))
+
+    if show_individual:
+        for year, wc in zip(years, all_weekly_counts):
+            counts = [wc.get(w, 0) for w in all_weeks]
+            plt.plot(all_weeks, counts, linestyle="--", alpha=0.4, label=f"{year}")
+
+    plt.plot(all_weeks, avg_counts, marker="o", linewidth=2, color="black", label="Average")
+
+    plt.xticks(range(1, 54))
+    plt.xlabel("Week")
+    plt.ylabel("Passengers")
+    plt.title(f"Average Weekly Passengers ({min(years)}–{max(years)})")
+    plt.legend()
+    plt.grid(True, linestyle="--", alpha=0.6)
+    plt.tight_layout()
+    plt.show()
